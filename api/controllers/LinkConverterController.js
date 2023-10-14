@@ -111,19 +111,26 @@ const convertDeeplinkToWebUrl = (url) => {
 };
 
 module.exports = {
-  webUrlToDeeplink: (request, response) => {
-    const { url } = request.body;
+  webUrlToDeeplink: async (request, response) => {
+    const { webURL } = request.body;
 
     try {
-      const isValidUrl = validateUrl({ url, urlType: URL_TYPE.WEB });
+      const isValidUrl = validateUrl({ url: webURL, urlType: URL_TYPE.WEB });
 
       if (!isValidUrl) {
         return response.badRequest('Invalid URL');
       }
 
-      const convertedUrl = convertWebUrlToDeeplink(url);
+      const convertedUrl = convertWebUrlToDeeplink(webURL);
 
-      return response.json(convertedUrl);
+      await LinkConverter.create({
+        requestType: URL_TYPE.WEB,
+        requestUrl: webURL,
+        responseType: URL_TYPE.DEEPLINK,
+        responseUrl: convertedUrl
+      });
+
+      return response.json({ deeplink: convertedUrl });
     } catch (error) {
       console.log('error :: ', error);
 
@@ -131,19 +138,26 @@ module.exports = {
     }
   },
 
-  deeplinkToWebUrl: (request, response) => {
-    const { url } = request.body;
+  deeplinkToWebUrl: async (request, response) => {
+    const { deeplink } = request.body;
 
     try {
-      const isValidUrl = validateUrl({ url, urlType: URL_TYPE.DEEPLINK });
+      const isValidUrl = validateUrl({ url: deeplink, urlType: URL_TYPE.DEEPLINK });
 
       if (!isValidUrl) {
         return response.badRequest('Invalid URL');
       }
 
-      const convertedUrl = convertDeeplinkToWebUrl(url);
+      const convertedUrl = convertDeeplinkToWebUrl(deeplink);
 
-      return response.json(convertedUrl);
+      await LinkConverter.create({
+        requestType: URL_TYPE.DEEPLINK,
+        requestUrl: deeplink,
+        responseType: URL_TYPE.WEB,
+        responseUrl: convertedUrl
+      });
+
+      return response.json({ webURL: convertedUrl });
     } catch (error) {
       console.log('error :: ', error);
 
