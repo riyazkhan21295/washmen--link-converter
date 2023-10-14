@@ -28,19 +28,35 @@ const validateUrl = ({ url, urlType }) => {
 };
 
 const convertWebUrlToDeeplink = (url) => {
+  const urlObj = new URL(url);
+
+  const [, service, product] = urlObj.pathname.split('/');
+
   const deeplinkSearchParams = {
     Page: 'Home'
   };
 
-  const urlObj = new URL(url);
-
-  const pathnameSegments = urlObj.pathname.split('/');
-
-  if (pathnameSegments[1] === 'sr') {
+  if (service === 'sr') {
     deeplinkSearchParams.Page = 'Search';
 
     if (urlObj.searchParams.has('q')) {
       deeplinkSearchParams.Query = urlObj.searchParams.get('q');
+    }
+  }
+
+  const isValidProduct = (new RegExp(/^(.*?)-p-(\d+)$/)).test(product);
+  if (isValidProduct) {
+    const [, productId] = product.split('-p-');
+
+    deeplinkSearchParams.Page = 'Product';
+    deeplinkSearchParams.ContentId = productId;
+
+    if (urlObj.searchParams.has('cityId')) {
+      deeplinkSearchParams.CityId = urlObj.searchParams.get('cityId');
+    }
+
+    if (urlObj.searchParams.has('clusterId')) {
+      deeplinkSearchParams.ClusterId = urlObj.searchParams.get('clusterId');
     }
   }
 
