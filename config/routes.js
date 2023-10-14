@@ -18,9 +18,9 @@ module.exports.routes = {
    *                                                                          *
    ***************************************************************************/
 
-  "/": { view: "pages/homepage" },
-  "POST /webUrlToDeeplink": {
-    action: "linkConverter/webUrlToDeeplink",
+  '/': { view: 'pages/homepage' },
+  'POST /webUrlToDeeplink': {
+    action: 'linkConverter/webUrlToDeeplink',
   },
 
   /***************************************************************************
