@@ -27,6 +27,26 @@ const validateUrl = ({ url, urlType }) => {
   return type === urlType;
 };
 
+const convertWebUrlToDeeplink = (url) => {
+  const deeplinkSearchParams = {
+    Page: 'Home'
+  };
+
+  const urlObj = new URL(url);
+
+  const pathnameSegments = urlObj.pathname.split('/');
+
+  if (pathnameSegments[1] === 'sr') {
+    deeplinkSearchParams.Page = 'Search';
+
+    if (urlObj.searchParams.has('q')) {
+      deeplinkSearchParams.Query = urlObj.searchParams.get('q');
+    }
+  }
+
+  return `washmen://?${(new URLSearchParams(deeplinkSearchParams)).toString()}`;
+};
+
 module.exports = {
   webUrlToDeeplink: (request, response) => {
     const { url } = request.body;
@@ -38,7 +58,9 @@ module.exports = {
         return response.badRequest('Invalid URL');
       }
 
-      return response.json('Valid URL');
+      const convertedUrl = convertWebUrlToDeeplink(url);
+
+      return response.json(convertedUrl);
     } catch (error) {
       console.log('error :: ', error);
 
