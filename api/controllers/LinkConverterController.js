@@ -5,9 +5,20 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
-const URL_TYPE_CONSTANTS = {
-  WEB_URL: 'WEB_URL',
+const URL_TYPE = {
+  WEB: 'WEB',
   DEEPLINK: 'DEEPLINK'
+};
+
+const BASE_URL = {
+  [URL_TYPE.WEB]: 'https://www.washmen.com',
+  [URL_TYPE.DEEPLINK]: 'washmen://'
+};
+
+const PAGE_TYPE = {
+  HOME: 'Home',
+  PRODUCT: 'Product',
+  SEARCH: 'Search'
 };
 
 const isUrlWeb = (url) => {
@@ -15,16 +26,16 @@ const isUrlWeb = (url) => {
 };
 
 const isUrlDeeplink = (url) => {
-  return url.startsWith('washmen://');
+  return url.startsWith(BASE_URL.DEEPLINK);
 };
 
 const getUrlType = (url) => {
   if (isUrlWeb(url)) {
-    return URL_TYPE_CONSTANTS.WEB_URL;
+    return URL_TYPE.WEB;
   }
 
   if (isUrlDeeplink(url)) {
-    return URL_TYPE_CONSTANTS.DEEPLINK;
+    return URL_TYPE.DEEPLINK;
   }
 
   return null;
@@ -42,11 +53,11 @@ const convertWebUrlToDeeplink = (url) => {
   const [, service, product] = urlObj.pathname.split('/');
 
   const deeplinkSearchParams = {
-    Page: 'Home'
+    Page: PAGE_TYPE.HOME
   };
 
   if (service === 'sr') {
-    deeplinkSearchParams.Page = 'Search';
+    deeplinkSearchParams.Page = PAGE_TYPE.SEARCH;
 
     if (urlObj.searchParams.has('q')) {
       deeplinkSearchParams.Query = urlObj.searchParams.get('q');
@@ -57,7 +68,7 @@ const convertWebUrlToDeeplink = (url) => {
   if (isValidProduct) {
     const [, productId] = product.split('-p-');
 
-    deeplinkSearchParams.Page = 'Product';
+    deeplinkSearchParams.Page = PAGE_TYPE.PRODUCT;
     deeplinkSearchParams.ContentId = productId;
 
     if (urlObj.searchParams.has('cityId')) {
@@ -69,11 +80,34 @@ const convertWebUrlToDeeplink = (url) => {
     }
   }
 
-  return `washmen://?${(new URLSearchParams(deeplinkSearchParams)).toString()}`;
+  return `${BASE_URL.DEEPLINK}?${(new URLSearchParams(deeplinkSearchParams)).toString()}`;
 };
 
 const convertDeeplinkToWebUrl = (url) => {
-  return url;
+  const params = new URLSearchParams(url.replace(`${BASE_URL.DEEPLINK}?`, ''));
+
+  const page = params.get('Page');
+
+  if (page === PAGE_TYPE.SEARCH) {
+    return `${BASE_URL.WEB}/sr?q=${params.Query}`;
+  }
+
+  if (page === PAGE_TYPE.PRODUCT) {
+    const contentId = params.get('ContentId');
+
+    const query = [
+            params.has('CityId') ? `cityId=${params.get('CityId')}` : '',
+            params.has('ClusterId') ? `clusterId=${params.get('ClusterId')}` : ''
+    ].filter(q => q);
+
+    const serviceName = 'serviceName'; // Todo
+
+    const productName = 'productName'; // Todo
+
+    return `${BASE_URL.WEB}/${serviceName}/${productName}-p-${contentId}?${query.join('&')}`;
+  }
+
+  return BASE_URL.WEB;
 };
 
 module.exports = {
@@ -81,7 +115,7 @@ module.exports = {
     const { url } = request.body;
 
     try {
-      const isValidUrl = validateUrl({ url, urlType: URL_TYPE_CONSTANTS.WEB_URL });
+      const isValidUrl = validateUrl({ url, urlType: URL_TYPE.WEB });
 
       if (!isValidUrl) {
         return response.badRequest('Invalid URL');
@@ -101,7 +135,7 @@ module.exports = {
     const { url } = request.body;
 
     try {
-      const isValidUrl = validateUrl({ url, urlType: URL_TYPE_CONSTANTS.WEB_URL });
+      const isValidUrl = validateUrl({ url, urlType: URL_TYPE.DEEPLINK });
 
       if (!isValidUrl) {
         return response.badRequest('Invalid URL');
