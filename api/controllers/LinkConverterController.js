@@ -7,6 +7,8 @@
 
 module.exports = {
   webUrlToDeeplink: (request, response) => {
-    return response.json("Working");
+    const { url } = request.body;
+
+    return response.json(url);
   },
 };
