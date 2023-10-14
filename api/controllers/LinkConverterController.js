@@ -83,4 +83,10 @@ module.exports = {
       return response.serverError('An error occurred');
     }
   },
+
+  deeplinkToWebUrl: (request, response) => {
+    const { url } = request.body;
+
+    return response.json(url);
+  }
 };
