@@ -11,41 +11,19 @@ const URL_TYPE = {
 };
 
 const BASE_URL = {
-  [URL_TYPE.WEB]: 'https://www.washmen.com',
-  [URL_TYPE.DEEPLINK]: 'washmen://'
+  WEB: 'https://www.washmen.com',
+  DEEPLINK: 'washmen://'
 };
 
-const PAGE_TYPE = {
+const PAGE = {
   HOME: 'Home',
   PRODUCT: 'Product',
   SEARCH: 'Search'
 };
 
-const isUrlWeb = (url) => {
-  return url.startsWith('http');
-};
+const isWebUrl = (url) => url.startsWith('http');
 
-const isUrlDeeplink = (url) => {
-  return url.startsWith(BASE_URL.DEEPLINK);
-};
-
-const getUrlType = (url) => {
-  if (isUrlWeb(url)) {
-    return URL_TYPE.WEB;
-  }
-
-  if (isUrlDeeplink(url)) {
-    return URL_TYPE.DEEPLINK;
-  }
-
-  return null;
-};
-
-const validateUrl = ({ url, urlType }) => {
-  const type = getUrlType(url);
-
-  return type === urlType;
-};
+const isDeeplink = (url) => url.startsWith(BASE_URL.DEEPLINK);
 
 const convertWebUrlToDeeplink = (url) => {
   const urlObj = new URL(url);
@@ -53,23 +31,21 @@ const convertWebUrlToDeeplink = (url) => {
   const [, service, product] = urlObj.pathname.split('/');
 
   const deeplinkSearchParams = {
-    Page: PAGE_TYPE.HOME
+    Page: PAGE.HOME
   };
 
   if (service === 'sr') {
-    deeplinkSearchParams.Page = PAGE_TYPE.SEARCH;
+    deeplinkSearchParams.Page = PAGE.SEARCH;
 
     if (urlObj.searchParams.has('q')) {
       deeplinkSearchParams.Query = urlObj.searchParams.get('q');
     }
   }
 
-  const isValidProduct = (new RegExp(/^(.*?)-p-(\d+)$/)).test(product);
-  if (isValidProduct) {
-    const [, productId] = product.split('-p-');
-
-    deeplinkSearchParams.Page = PAGE_TYPE.PRODUCT;
-    deeplinkSearchParams.ContentId = productId;
+  const productMatch = product.match(/^(.*?)-p-(\d+)$/);
+  if (productMatch) {
+    deeplinkSearchParams.Page = PAGE.PRODUCT;
+    deeplinkSearchParams.ContentId = productMatch[2];
 
     if (urlObj.searchParams.has('cityId')) {
       deeplinkSearchParams.CityId = urlObj.searchParams.get('cityId');
@@ -88,11 +64,11 @@ const convertDeeplinkToWebUrl = (url) => {
 
   const page = params.get('Page');
 
-  if (page === PAGE_TYPE.SEARCH) {
+  if (page === PAGE.SEARCH) {
     return `${BASE_URL.WEB}/sr?q=${params.Query}`;
   }
 
-  if (page === PAGE_TYPE.PRODUCT) {
+  if (page === PAGE.PRODUCT) {
     const contentId = params.get('ContentId');
 
     const query = [
@@ -100,9 +76,9 @@ const convertDeeplinkToWebUrl = (url) => {
             params.has('ClusterId') ? `clusterId=${params.get('ClusterId')}` : ''
     ].filter(q => q);
 
-    const serviceName = 'serviceName'; // Todo
+    const serviceName = 'serviceName'; // Todo: find service name from database
 
-    const productName = 'productName'; // Todo
+    const productName = 'productName'; // Todo: find product name from database
 
     return `${BASE_URL.WEB}/${serviceName}/${productName}-p-${contentId}?${query.join('&')}`;
   }
@@ -115,9 +91,7 @@ module.exports = {
     const { webURL } = request.body;
 
     try {
-      const isValidUrl = validateUrl({ url: webURL, urlType: URL_TYPE.WEB });
-
-      if (!isValidUrl) {
+      if (!isWebUrl(webURL)) {
         return response.badRequest('Invalid URL');
       }
 
@@ -142,9 +116,7 @@ module.exports = {
     const { deeplink } = request.body;
 
     try {
-      const isValidUrl = validateUrl({ url: deeplink, urlType: URL_TYPE.DEEPLINK });
-
-      if (!isValidUrl) {
+      if (!isDeeplink(deeplink)) {
         return response.badRequest('Invalid URL');
       }
 
