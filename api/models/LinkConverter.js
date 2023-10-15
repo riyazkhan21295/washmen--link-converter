@@ -6,8 +6,6 @@
  */
 
 module.exports = {
-  // adapter: 'postgresql',
-
   attributes: {
     requestType: {
       type: 'string',

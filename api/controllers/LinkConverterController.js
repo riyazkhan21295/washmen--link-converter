@@ -28,7 +28,7 @@ const isDeeplink = (url) => url.startsWith(BASE_URL.DEEPLINK);
 const convertWebUrlToDeeplink = (url) => {
   const urlObj = new URL(url);
 
-  const [, service, product] = urlObj.pathname.split('/');
+  const [, service, product = ''] = urlObj.pathname.split('/');
 
   const deeplinkSearchParams = {
     Page: PAGE.HOME
@@ -96,12 +96,12 @@ module.exports = {
 
       const convertedUrl = convertWebUrlToDeeplink(webURL);
 
-      // await LinkConverter.create({
-      //   requestType: URL_TYPE.WEB,
-      //   requestUrl: webURL,
-      //   responseType: URL_TYPE.DEEPLINK,
-      //   responseUrl: convertedUrl
-      // });
+      await LinkConverter.create({
+        requestType: URL_TYPE.WEB,
+        requestUrl: webURL,
+        responseType: URL_TYPE.DEEPLINK,
+        responseUrl: convertedUrl
+      });
 
       return response.json({ deeplink: convertedUrl });
     } catch (error) {
@@ -121,12 +121,12 @@ module.exports = {
 
       const convertedUrl = convertDeeplinkToWebUrl(deeplink);
 
-      // await LinkConverter.create({
-      //   requestType: URL_TYPE.DEEPLINK,
-      //   requestUrl: deeplink,
-      //   responseType: URL_TYPE.WEB,
-      //   responseUrl: convertedUrl
-      // });
+      await LinkConverter.create({
+        requestType: URL_TYPE.DEEPLINK,
+        requestUrl: deeplink,
+        responseType: URL_TYPE.WEB,
+        responseUrl: convertedUrl
+      });
 
       return response.json({ webURL: convertedUrl });
     } catch (error) {
