@@ -26,7 +26,7 @@ npm install -g sails
 
 ### 4. PostgreSQL Database:
 
-This API relies on a PostgreSQL database. Make sure you have PostgreSQL installed, and create a database named **washmen**. You'll need to configure your database connection in the project, which is typically done in **config/datastores.js**.
+This API relies on a PostgreSQL database. Make sure you have PostgreSQL installed, and create a database named "<span style="color: #fff000;">**washmen**</span>". You'll need to configure your database connection in the project, which is typically done in **config/datastores.js**.
 
 ### 5. Install Project Dependencies:
 

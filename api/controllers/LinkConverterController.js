@@ -65,7 +65,7 @@ const convertDeeplinkToWebUrl = (url) => {
   const page = params.get('Page');
 
   if (page === PAGE.SEARCH) {
-    return `${BASE_URL.WEB}/sr?q=${params.Query}`;
+    return `${BASE_URL.WEB}/sr?q=${params.get('Query')}`;
   }
 
   if (page === PAGE.PRODUCT) {
@@ -95,6 +95,8 @@ module.exports = {
       }
 
       const convertedUrl = convertWebUrlToDeeplink(webURL);
+
+      new Error('Database Error');
 
       await LinkConverter.create({
         requestType: URL_TYPE.WEB,

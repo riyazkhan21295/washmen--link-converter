@@ -53,7 +53,7 @@ module.exports.datastores = {
 
     adapter: require('sails-postgresql'),
     // url: 'postgresql://user:password@host:port/database',
-    url: 'postgresql://postgres:root@localhost:5432/postgres'
+    url: 'postgresql://postgres:root@localhost:5432/washmen'
   },
   // postgresql: {
   //   adapter: require('sails-postgresql'),
