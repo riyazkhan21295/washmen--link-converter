@@ -77,7 +77,6 @@ const convertDeeplinkToWebUrl = (url) => {
     ].filter(q => q);
 
     const serviceName = 'serviceName'; // Todo: find service name from database
-
     const productName = 'productName'; // Todo: find product name from database
 
     return `${BASE_URL.WEB}/${serviceName}/${productName}-p-${contentId}?${query.join('&')}`;
@@ -97,12 +96,12 @@ module.exports = {
 
       const convertedUrl = convertWebUrlToDeeplink(webURL);
 
-      await LinkConverter.create({
-        requestType: URL_TYPE.WEB,
-        requestUrl: webURL,
-        responseType: URL_TYPE.DEEPLINK,
-        responseUrl: convertedUrl
-      });
+      // await LinkConverter.create({
+      //   requestType: URL_TYPE.WEB,
+      //   requestUrl: webURL,
+      //   responseType: URL_TYPE.DEEPLINK,
+      //   responseUrl: convertedUrl
+      // });
 
       return response.json({ deeplink: convertedUrl });
     } catch (error) {
@@ -122,12 +121,12 @@ module.exports = {
 
       const convertedUrl = convertDeeplinkToWebUrl(deeplink);
 
-      await LinkConverter.create({
-        requestType: URL_TYPE.DEEPLINK,
-        requestUrl: deeplink,
-        responseType: URL_TYPE.WEB,
-        responseUrl: convertedUrl
-      });
+      // await LinkConverter.create({
+      //   requestType: URL_TYPE.DEEPLINK,
+      //   requestUrl: deeplink,
+      //   responseType: URL_TYPE.WEB,
+      //   responseUrl: convertedUrl
+      // });
 
       return response.json({ webURL: convertedUrl });
     } catch (error) {
