@@ -1,26 +1,91 @@
-# washmen-link-converter
+# Link Conversion API
 
-a [Sails v1](https://sailsjs.com) application
+The Link Conversion API allows you to seamlessly convert between web URLs and deeplinks.
 
+## Prerequisites
 
-### Links
+Before using the API, you'll need to set up your development environment and make sure you have the required tools installed.
 
-+ [Sails framework documentation](https://sailsjs.com/get-started)
-+ [Version notes / upgrading](https://sailsjs.com/documentation/upgrading)
-+ [Deployment tips](https://sailsjs.com/documentation/concepts/deployment)
-+ [Community support options](https://sailsjs.com/support)
-+ [Professional / enterprise options](https://sailsjs.com/enterprise)
+### 1. Clone the Repository:
 
+```bash
+git clone https://github.com/riyazkhan21295/washmen--link-converter.git
+```
 
-### Version info
+### 2. Node.js and NPM:
 
-This app was originally generated on Sat Oct 14 2023 16:15:30 GMT+0400 (Gulf Standard Time) using Sails v1.5.8.
+Ensure you have Node.js installed, preferably version **16** or **higher**. If not, download and install it from [Node.js Website](https://nodejs.org/en)
 
-<!-- Internally, Sails used [`sails-generate@2.0.8`](https://github.com/balderdashy/sails-generate/tree/v2.0.8/lib/core-generators/new). -->
+### 3. Sails.js:
 
+Sails.js is the web application framework used for this project. If you don't have Sails.js installed globally, you can install it with the following command:
 
+```bash
+npm install -g sails
+```
 
-<!--
-Note:  Generators are usually run using the globally-installed `sails` CLI (command-line interface).  This CLI version is _environment-specific_ rather than app-specific, thus over time, as a project's dependencies are upgraded or the project is worked on by different developers on different computers using different versions of Node.js, the Sails dependency in its package.json file may differ from the globally-installed Sails CLI release it was originally generated with.  (Be sure to always check out the relevant [upgrading guides](https://sailsjs.com/upgrading) before upgrading the version of Sails used by your app.  If you're stuck, [get help here](https://sailsjs.com/support).)
--->
+### 4. PostgreSQL Database:
 
+This API relies on a PostgreSQL database. Make sure you have PostgreSQL installed, and create a database named **washmen**. You'll need to configure your database connection in the project, which is typically done in **config/datastores.js**.
+
+### 5. Install Project Dependencies:
+
+Navigate to the project folder and install the required dependencies using npm:
+
+### 6. Start the Server:
+
+To run the API, use the following command:
+
+```bash
+sails lift
+```
+
+That's it! Your Link Conversion API should be up and running.
+
+## How to Use the API
+
+The API provides two main endpoints for converting URLs to deeplinks and vice versa.
+
+Here's how to use them:
+
+### Convert Web URL to Deeplink
+
+- **URL:** **`/api/linkConverter/webUrlToDeeplink`**
+- **Method:** POST
+- **Request Body:** Send a JSON object with the web URL you want to convert
+
+```json
+{
+  "webURL": "https://www.washmen.com/clean-and-press/shirts-p-1894501?cityId=994892-asda0-123-asdq"
+}
+```
+
+- **Response Body:** You will receive a JSON response containing the generated deeplink
+
+```json
+{
+  "deeplink": "washmen://?Page=Product&ContentId=1894501&CityId=994892-asda0-123-asdq"
+}
+```
+
+### Convert Deeplink to Web URL
+
+- **URL:** **`/api/linkConverter/deeplinkToWebUrl`**
+- **Method:** POST
+- **Request Body:** Send a JSON object with the web URL you want to convert
+
+```json
+{
+  "deeplink": "washmen://?Page=Product&ContentId=1894501&CityId=994892-asda0-123-asdq"
+}
+```
+
+- **Response Body:** You will receive a JSON response containing the generated deeplink
+
+```json
+{
+  "webURL": "https://www.washmen.com/clean-and-press/shirts-p-1894501?cityId=994892-asda0-123-asdq"
+}
+```
+
+This API is ready for use in your applications to seamlessly convert URLs to deeplinks and back.

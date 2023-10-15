@@ -20,11 +20,11 @@ module.exports.routes = {
 
   '/': { view: 'pages/homepage' },
 
-  'POST /webUrlToDeeplink': {
+  'POST /api/linkConverter/webUrlToDeeplink': {
     action: 'linkConverter/webUrlToDeeplink',
   },
 
-  'POST /deeplinkToWebUrl': {
+  'POST /api/linkConverter/deeplinkToWebUrl': {
     action: 'linkConverter/deeplinkToWebUrl'
   }
 
