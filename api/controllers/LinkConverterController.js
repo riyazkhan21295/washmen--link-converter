@@ -96,8 +96,6 @@ module.exports = {
 
       const convertedUrl = convertWebUrlToDeeplink(webURL);
 
-      new Error('Database Error');
-
       await LinkConverter.create({
         requestType: URL_TYPE.WEB,
         requestUrl: webURL,
